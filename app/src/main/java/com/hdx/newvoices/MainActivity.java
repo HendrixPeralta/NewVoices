@@ -119,8 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setAdapter(mNewsAdapter);
 
         progressBar.setVisibility(View.VISIBLE);
-        UpdatedPost();
-//        new RetrieveData().execute();
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-
+        UpdatedPost();
     }
 
     public void UpdatedPost() {

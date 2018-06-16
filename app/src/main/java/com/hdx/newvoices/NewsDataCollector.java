@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -90,8 +91,6 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         databaseReference = firebaseDatabase.getReference().child("Post");
-//        databaseReferenceSport = firebaseDatabase.getReference().child("Post").child("Sport");
-//        databaseReferenceEconomy = firebaseDatabase.getReference().child("Post").child("Economy");
         storageReference = firebaseStorage.getReference().child("Post_Images");
 
         titleEditText = findViewById(R.id.input_title_edit_text);
@@ -108,7 +107,6 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
 
         date = Calendar.getInstance().getTime();
         postDate = DateFormat.getDateInstance(DateFormat.FULL).format(date);
-        Toast.makeText(this, postDate, Toast.LENGTH_LONG).show();
 
         new RetrieveData().execute();
 
@@ -120,6 +118,7 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
 
         });
         publishImageButton.setOnClickListener(view ->{
+
             postTitle = titleEditText.getText().toString();
             postDescription = descriptionEditText.getText().toString();
 
@@ -129,10 +128,17 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
 
             NewsModel newsModel =
                     new NewsModel(postTitle, postAddress, postDate, postCategory, userName, postDescription, postImge);
-            databaseReference.push().setValue(newsModel);
-            pushNotification("Nuevo Contenido", postTitle);
-            Log.d("PostAddress", postImge);
-            finish();
+//            if (postImge == null && postTitle == null  && postDescription == null ) {
+//                Toast.makeText(this, "Faltan Datos", Toast.LENGTH_SHORT).show();
+//            }else {
+                databaseReference.push().setValue(newsModel);
+                pushNotification("Nuevo Contenido", postTitle);
+//                Log.d("PostAddress", postImge);
+//                Log.d("PostAddress", postAddress);
+
+                finish();
+//            }
+
         });
     }
 
@@ -151,6 +157,7 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
         notificationManager.notify(1, builder.build());
 
     }
+
     public void GetLocation(){
 
         FusedLocationProviderClient locationProviderClient =
@@ -186,14 +193,14 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
 
                 try {
                     addresses = geocoder.getFromLocation(latitude, longitude,1);
-                    String country = addresses.get(0).getCountryName();
-                    String city = addresses.get(0).getAdminArea();
-
-                    postAddress = city + ", " + country;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                String country = addresses.get(0).getCountryName();
+                String city = addresses.get(0).getAdminArea();
+                postAddress = city + ", " + country;
             }
         });
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
@@ -214,7 +221,6 @@ public class NewsDataCollector extends AppCompatActivity implements AdapterView.
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         postCategory = parent.getItemAtPosition(position).toString();
-        Toast.makeText(this, postCategory, Toast.LENGTH_SHORT).show();
     }
 
     @Override
